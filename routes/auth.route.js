@@ -1,31 +1,23 @@
 import { Router } from "express";
-import { login, register, infoUser } from "../controllers/auth.controller.js";
-import { body } from "express-validator";
-import { validationResultExpress } from "../middleWares/validationResultExpress.js";
+import {
+  login,
+  register,
+  infoUser,
+  refreshToken,
+  logout,
+} from "../controllers/auth.controller.js";
 import { requireToken } from "../middleWares/requireToken.js";
+import { requireRefreshToken } from "../middleWares/requireRefreshToken.js";
+import { bodyLoginValidator } from "../middleWares/validatorManager.js";
 
 const router = Router();
 
-router.post(
-  "/register",
-  [
-    body("email", "Incorrect email format").isEmail().normalizeEmail(),
-    body("password", "Incorrect password format").trim().isLength({ min: 6 }),
-  ],
-  validationResultExpress,
-  register
-);
+router.post("/register", bodyLoginValidator, register);
 
-router.post(
-  "/login",
-  [
-    body("email", "Incorrect email format").isEmail().normalizeEmail(),
-    body("password", "Incorrect password format").trim().isLength({ min: 6 }),
-  ],
-  validationResultExpress,
-  login
-);
+router.post("/login", bodyLoginValidator, login);
 
-router.get("/protected", requireToken, infoUser)
+router.get("/protected", requireToken, infoUser);
+router.get("/refresh", requireRefreshToken, refreshToken);
+router.get("/logout", logout);
 
 export default router;
