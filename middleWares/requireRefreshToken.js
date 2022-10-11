@@ -3,15 +3,12 @@ import jwt from "jsonwebtoken";
 
 export const requireRefreshToken = (req, res, next) => {
   try {
-    const { refreshTokenCookie } = req.cookies.refreshToken;
-    if (!refreshTokenCookie) throw new Error("Token does not exist");
+    const refreshTokenCookie = req.cookies.refreshToken;
+    if (!refreshTokenCookie) throw new Error("Token does not exist 👎");
 
     const { uid } = jwt.verify(refreshTokenCookie, process.env.JWT_REFRESH);
-
     req.uid = uid
     next()
-
-    return res.json({ token, expiresIn });
   } catch (error) {
     console.log(error);
     res.status(401).json({ error: tokenVerificationErrors[error.message]})
